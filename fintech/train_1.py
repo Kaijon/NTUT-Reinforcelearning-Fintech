@@ -13,7 +13,7 @@ policies = ['MlpPolicy']
 algorithms = ['PPO2']
 # policies = ['MlpLnLstmPolicy']
 
-process_pool = Pool(processes=6, maxtasksperchild=1)
+process_pool = Pool(os.cpu_count(), maxtasksperchild=1)
 
 for algorithm in algorithms:
     for policy in policies:

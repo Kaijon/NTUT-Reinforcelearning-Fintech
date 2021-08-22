@@ -45,6 +45,10 @@ class FinTechTrainEnv(gym.Env):
 
         # 觀察歷史N個時間單位 預設10個時間單位
         self.observation_length = kwargs.get('observation_length', 10)
+
+        # Observe the future stock price, Default is 1 day
+        self.watch_days = kwargs.get('watch_days', 1)
+        print("KC---> Watch days = {}".format(self.watch_days))
         
         # 三個動作(買 賣 不動作)  
         self.action_space = gym.spaces.MultiDiscrete([4])
@@ -63,6 +67,7 @@ class FinTechTrainEnv(gym.Env):
         self.assets = [self.balance]        
         self.current_step = 0
         self.action_mask = [[1, 1, 1, 1]]
+        self.watch_days = 1
 
         # 餘額　貨幣數量 購買數量 購買成本 賣出數量 賣出所得
         self.account_history = np.array([[self.balance],[self.cryptocurrency_held],[0],[0],[0],[0]])
@@ -71,7 +76,7 @@ class FinTechTrainEnv(gym.Env):
 
     def step(self, action):
         current_price = self.df[0]['Close'].values[self.current_step + self.observation_length]
-        next_time_price = self.df[0]['Close'].values[self.current_step + self.observation_length + 1]
+        next_time_price = self.df[0]['Close'].values[self.current_step + self.observation_length + self.watch_days]
 
         buy_amount = 0
         cost = 0

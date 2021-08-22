@@ -10,7 +10,7 @@ from openpyxl import Workbook
 algorithms = ['PPO2']
 policies = ['MlpPolicy']
 
-process_pool = Pool(processes=6, maxtasksperchild=2)
+process_pool = Pool(os.cpu_count(), maxtasksperchild=1)
 wb = Workbook()
 
 for algorithm in algorithms:
