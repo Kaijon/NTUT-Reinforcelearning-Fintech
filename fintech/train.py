@@ -101,7 +101,7 @@ def train(data_set, algorithm, policy):
         model = ACKTR(policy, train_env, verbose=0, tensorboard_log=tensorboard_folder, full_tensorboard_log=False)
        
     for idx in range(0, 100):
-        model.learn(total_timesteps=len(train_df_data_set)*10-g_watch_days)
+        model.learn(total_timesteps=len(train_df_data_set)*10)
         model.save(model_folder + str(idx))
         gc.collect()
 
