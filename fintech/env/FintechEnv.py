@@ -139,7 +139,7 @@ class FinTechTrainEnv(gym.Env):
         print('Net worth: ' + str(self.assets[-1]))
 
     def finish(self):
-        return self.assets[-1] < self.start_balance / 10 or self.current_step + self.observation_length == len(self.df[0]) - 1
+        return self.assets[-1] < self.start_balance / 10 or self.current_step + self.observation_length == len(self.df[0]) - watch_days
 
     def get_reward(self):
         length = min(self.current_step, self.observation_length)
