@@ -1,3 +1,4 @@
+from pickle import NEWOBJ_EX
 import gym
 import pandas as pd
 import numpy as np
@@ -64,7 +65,8 @@ class FinTechTrainEnv(gym.Env):
     def reset(self):
         self.balance = self.start_balance
         self.cryptocurrency_held = 0
-        self.assets = [self.balance]        
+        self.assets = [self.balance]
+        self.fake_assets = [self.balance]                
         self.current_step = 0
         self.action_mask = [[1, 1, 1, 1]]
         self.watch_days = 1
@@ -77,6 +79,9 @@ class FinTechTrainEnv(gym.Env):
     def step(self, action):
         current_price = self.df[0]['Close'].values[self.current_step + self.observation_length]
         next_time_price = self.df[0]['Close'].values[self.current_step + self.observation_length + self.watch_days]
+        delta = (next_time_price - current_price) // self.watch_days # It means that normalizing average of next time 
+        #next_time_price = current_price + delta
+        fake_next_time_price = current_price + delta
 
         buy_amount = 0
         cost = 0
@@ -123,6 +128,8 @@ class FinTechTrainEnv(gym.Env):
         self.current_step += 1
 
         self.assets.append(self.balance + self.cryptocurrency_held * next_time_price)
+        # KC, Generate a fake asset for get_reward function
+        self.fake_assets.append(self.balance + self.cryptocurrency_held * fake_next_time_price)
 
         self.computational_action_mask()
         observation = self.next_observation()
@@ -143,7 +150,9 @@ class FinTechTrainEnv(gym.Env):
 
     def get_reward(self):
         length = min(self.current_step, self.observation_length)
-        assets = self.assets[-2:]
+        #assets = self.assets[-2:]
+        # KC, fake asset instead, with average next price for the reward
+        assets = self.fake_assets[-2:]
 
         # 計算收益率 
         # (assets[n] - assets[n -1])/assets[n -1]
